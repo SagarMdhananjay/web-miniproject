@@ -56,11 +56,11 @@
 						</ul>
 
 						<ul class="nav navbar-nav" style="font-family: Times New Roman;">
-							<li class="active">
+							<li>
 								<a href="index.php">Boats</a>
 							</li>
-							<li>
-								<a href="reservation.php">Reservation</a>
+							<li  class="active">
+								<a href="myreservation.php">My Reservation</a>
 							</li>
 						</ul>
 						
@@ -81,73 +81,75 @@
 		<br />
 		
 		<!-- main cntent -->
-		<?php 
-				//para delete
-				if(isset($_GET['delid']))
-					{
-						$bid = $_GET['delid'];
-						$sql = "DELETE FROM boats WHERE b_id = ? ";
-						$res = $db->deleteRow($sql,[$bid]);
-
-						$bimg = $_GET['bimg'];
-						if($bimg != '../boat_image/'.'default.png'){
-							unlink($bimg);
-						}
-						//header('Location: index.php'$bimg.'.jpg'
-					}
-			?>
-
-
-		 <div class="container">
-			<a href="newboat.php" class="btn btn-success">
-				New
-				<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-			</a>
+		
+		
+ <div class="container">
+			
 			<br />
 			<br />
 
+			
+		 <br />
 		 	 <table id="myTable" class="table table-striped" >  
 				<thead>
+					<th>TOURIST</th>
+					<th>CONTACT</th>
+					<th>ADDRESS</th>
+					<th><center>IMAGE</center></th>
 					<th>BOAT NAME</th>
-					<th>BOAT CAPACITY</th>
-					<th>BOAT OPERATOR NAME</th>
-					<th><center>BOAT IMAGE</center></th>
+					<th>OPERATOR NAME</th>
+					<th>DESTINATION</th>
+					<th>DATE</th>
+					<th>TIME</th>
 					<th>PRICE</th>
-					<th><center>ACTION</center></th>
 				</thead>
 				<tbody>
 					<?php 
+			$sql = "SELECT * FROM reservation r INNER JOIN boats b ON b.b_id = r.b_id
+			INNER JOIN tourist t ON t.tour_id = r.tour_id
+			";
+			$res = $db->getRows($sql);
 
-						$sql = "SELECT * FROM boats ORDER BY b_name";
-						$res = $db->getRows($sql);
-						foreach ($res as $row) {
-							$bid = $row['b_id'];
-							$bn = $row['b_name'];
-							$bcpcty = $row['b_cpcty'];
-							$bon = $row['b_on'];
-							$bimg = $row['b_img'];
-							$bPrice = $row['b_price'];
-						
+			// echo print_r($res);
 
-					?>
+			foreach ($res as  $r) {
+
+				$r_id = $r['r_id'];
+				$tfn = $r['tour_fN'];
+				$tmn = $r['tour_mN'];
+				$tln = $r['tour_lN'];
+				$tcontact = $r['tour_contact'];
+				$taddress = $r['tour_address'];
+				$img = $r['b_img'];
+				$bn = $r['b_name'];
+				$bon = $r['b_on'];
+				$dstntn = $r['r_dstntn'];
+				$bprice = $r['b_price'];
+				$rdate = $r['r_date'];
+				$rhr = $r['r_hr'];
+				$rampm = $r['r_ampm'];
+
+				$oras = $rhr.' '.$rampm;
+		?>
 					<tr>
+						<td class="align-img"><?php echo $tfn.' '.$tmn.' '.$tln; ?></td>
+						<td class="align-img"><?php echo $tcontact; ?></td>
+						<td class="align-img"><?php echo $taddress; ?></td>
+						<td class="align-img"><center><img src="<?php echo $img; ?>" width="50" height="50"></center></td>
 						<td class="align-img"><?php echo $bn; ?></td>
-						<td class="align-img"><?php echo $bcpcty; ?></td>
 						<td class="align-img"><?php echo $bon; ?></td>
-						<td class="align-img"><center><img src="<?php echo $bimg; ?>" width="50" height="50"></center></td>
-						<td class="align-img"><?php echo 'Php '.number_format($bPrice, 2); ?></td>
-						<td class="align-img">
-							<a class = "btn btn-success btn-xs" href="boatsupdate.php?editid=<?php echo $bid; ?>">
-								Edit
-								<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-							</a>
-							<a class = "btn btn-danger  btn-xs" href="index.php?delid=<?php echo $bid; ?>&bimg=<?php echo $bimg; ?>">
-								Delete
-								<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-							</a>
-						</td>
+						<td class="align-img"><?php echo $dstntn; ?></td>
+						<td class="align-img"><?php echo $rdate; ?></td>
+						<td class="align-img"><?php echo $oras; ?></td>
+						<td class="align-img"><?php echo 'Php '.number_format($bprice, 2); ?></td>
 					</tr>
-					<?php } ?>
+					<?php
+			}//end foreach loop of display all resevdbation
+
+
+		?>
+
+
 
 				</tbody>
 			</table>
@@ -173,6 +175,23 @@ $(document).ready(function(){
     $('#myTable').dataTable();
 });
     </script>
+
+
+		
+		<!-- main cntent -->
+
+	</body>
+ 		<script src="../bootstrap/js/jquery-1.11.1.min.js"></script>
+ 		<script src="../bootstrap/js/dataTables.js"></script>
+ 		<script src="../bootstrap/js/dataTables2.js"></script>
+ 		<script src="../bootstrap/js/bootstrap.js"></script>
+ 		    <!--pagination-->
+    <link rel="stylesheet" href="../bootstrap/css/jquery.dataTables.css"><!--searh box positioning-->
+    <script src="../bootstrap/js/jquery.dataTables2.js"></script>
+
+
+
+
 
 
 </html>
